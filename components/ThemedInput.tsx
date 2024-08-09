@@ -7,7 +7,6 @@ export type IThemedInputProps = TextInputProps & {
   lightColor?: string;
   darkColor?: string;
   label?: string;
-  flex?: number;
 };
 
 export const ThemedInput = ({
@@ -15,7 +14,6 @@ export const ThemedInput = ({
   darkColor,
   style,
   label,
-  flex,
   ...props
 }: IThemedInputProps) => {
   const placeholderColor = useThemeColor(
@@ -33,7 +31,7 @@ export const ThemedInput = ({
   );
 
   return (
-    <ThemedView style={{ flex: flex ?? 0 }}>
+    <ThemedView>
       <ThemedText type="defaultSemiBold">{label}</ThemedText>
       <TextInput
         style={[
