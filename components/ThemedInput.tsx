@@ -31,8 +31,10 @@ export const ThemedInput = ({
   );
 
   return (
-    <ThemedView>
-      <ThemedText type="defaultSemiBold">{label}</ThemedText>
+    <ThemedView style={styles.container}>
+      <ThemedText type="defaultSemiBold" darkColor="" lightColor="">
+        {label}
+      </ThemedText>
       <TextInput
         style={[
           {
@@ -40,7 +42,7 @@ export const ThemedInput = ({
             color: textColor,
             backgroundColor: inputColor,
             borderRadius: 6,
-            padding: 4,
+            padding: 10,
           },
           style,
         ]}
@@ -51,4 +53,8 @@ export const ThemedInput = ({
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    gap: 12,
+  },
+});
