@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import {
+  Alert,
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
@@ -10,8 +11,11 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import { ComponentProps } from 'react';
+import { ComponentProps, useMemo, useState } from 'react';
 import { ThemedInput } from '@/components/ThemedInput';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { createTodo, editTodo } from '@/redux/slice/todo';
+import { RootState } from '@/redux/store';
 
 type IconButtonType = TouchableOpacityProps & {
   name: ComponentProps<typeof Ionicons>['name'];
@@ -31,25 +35,76 @@ function IconButton({ name, ...props }: IconButtonType) {
 }
 
 export default function CreateScreen() {
-  const todo = useLocalSearchParams();
+  const param = useLocalSearchParams();
   const theme = useColorScheme() ?? 'light';
+  const dispatch = useAppDispatch();
+  const { todoList } = useAppSelector((state: RootState) => state);
+
+  const todo = useMemo(
+    () => todoList.find((todo) => todo.id === param.id),
+    [param]
+  );
+
+  const [title, setTitle] = useState(() => (todo?.title as string) ?? '');
+  const [description, setDescription] = useState(
+    () => (todo?.description as string) ?? ''
+  );
+
+  function handleClose() {
+    router.navigate('/');
+  }
+
+  function handleTodoCreation() {
+    if (title && description) {
+      if (!!todo?.id) {
+        return dispatch(
+          editTodo({
+            id: todo.id,
+            title,
+            description,
+            completed: todo.completed,
+          })
+        );
+      } else {
+        dispatch(createTodo({ title, description }));
+      }
+      handleClose();
+    } else {
+      Alert.alert('Empty Field', 'must have title & description', [
+        {
+          text: 'Cancel',
+          onPress: handleClose,
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => {} },
+      ]);
+    }
+  }
 
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <IconButton name="close" onPress={() => router.navigate('/')} />
+        <IconButton name="close" onPress={() => handleClose()} />
 
-        <ThemedText type="subtitle">
-          {!todo ? 'Create' : 'Edit'} Todo
+        <ThemedText type="title">
+          {!todo?.id ? 'Create' : 'Edit'} Todo
         </ThemedText>
-        <IconButton name="checkmark" />
+        <IconButton name="checkmark" onPress={() => handleTodoCreation()} />
       </ThemedView>
+
       <ThemedView style={styles.form}>
-        <ThemedInput label="Title" placeholder="Do something fun!" />
+        <ThemedInput
+          label="Title"
+          value={title}
+          onChangeText={(val) => setTitle(val)}
+          placeholder="Do something fun!"
+        />
         <ThemedInput
           label="Description"
           placeholder="Details about something fun..."
           style={{ flex: 1, minHeight: 180 }}
+          value={description}
+          onChangeText={(val) => setDescription(val)}
           multiline={true}
         />
       </ThemedView>
