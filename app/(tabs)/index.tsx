@@ -35,7 +35,7 @@ export default function HomeScreen() {
         {todoList.length > 1 ? (
           todoList.map((todo) => <TodoCard todo={todo} key={todo.id} />)
         ) : (
-          <ZeroState />
+          <ZeroState text="No Todo yet" detail="oops! no todo list yet" />
         )}
       </ParallaxScrollView>
       <TouchableOpacity
