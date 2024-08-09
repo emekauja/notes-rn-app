@@ -1,111 +1,51 @@
-import { Image, StyleSheet, Platform, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import SearchBar from '@/components/primitives/SearchInput';
+import { Link, router } from 'expo-router';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { RootState } from '@/redux/store';
+import TodoCard from '@/components/primitives/TodoCard';
+import ZeroState from '@/components/primitives/ZeroState';
 
 export default function HomeScreen() {
+  const { todoList } = useAppSelector((state: RootState) => state);
+  const dispatch = useAppDispatch();
+
   return (
     <>
-    <ThemedView  style={styles.headerContainer}>
-        <ThemedText style={styles.logo} type='title'>Notéla</ThemedText>
-        <SearchBar searchPhrase='' updateClicked={(click) => {console.log(click)}} updateSearchPhrase={(phrase) => {}} />
-    </ThemedView>
-
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.imageBanner}
-        />
-      
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-             
-
-            <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-    <TouchableOpacity
-                style={{
-                    borderWidth: 1,
-                    borderColor: 'black',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 52,
-                    position: 'absolute',
-                    bottom: 30,
-                    right: 20,
-                    height: 52,
-                    backgroundColor: 'black',
-                    borderRadius: 100,
-                }}
-                onPress={() => { alert('Button is pressed') }}
-            >
-              <TabBarIcon name='add' color='white' />
-            </TouchableOpacity>
+      <ParallaxScrollView
+        headerElement={
+          <ThemedView style={styles.headerContainer}>
+            <ThemedText type="title">Todoist</ThemedText>
+            <SearchBar
+              searchPhrase=""
+              updateClicked={(click) => {
+                console.log(click);
+              }}
+              updateSearchPhrase={(phrase) => {}}
+            />
+          </ThemedView>
+        }
+        headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      >
+        {todoList.length > 1 ? (
+          todoList.map((todo) => <TodoCard todo={todo} key={todo.id} />)
+        ) : (
+          <ZeroState />
+        )}
+      </ParallaxScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => {
+          router.navigate('/create');
+        }}
+      >
+        <TabBarIcon name="add" color="white" />
+      </TouchableOpacity>
     </>
   );
 }
@@ -116,14 +56,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
   imageBanner: {
     height: 178,
     width: 290,
-    bottom: 0,
+    bottom: -50,
     left: 0,
     position: 'absolute',
   },
@@ -132,14 +68,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     maxHeight: 120,
-    // minHeight: 400,
-    marginTop: 20
+    paddingTop: 20,
   },
-  logo: {
 
-  },
   searchInput: {
     borderWidth: 2,
-    borderColor: 'black'
-  }
+    borderColor: 'black',
+  },
+  floatingButton: {
+    borderWidth: 1,
+    borderColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 52,
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    height: 52,
+    backgroundColor: 'black',
+    borderRadius: 100,
+  },
 });
