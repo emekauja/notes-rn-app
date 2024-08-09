@@ -4,12 +4,17 @@ import { ThemedView } from '../ThemedView';
 import { ThemedText } from '../ThemedText';
 import { TabBarIcon } from '../navigation/TabBarIcon';
 
-const ZeroState = () => {
+interface IZeroState {
+  text?: string;
+  detail?: string;
+}
+
+const ZeroState = ({ text, detail }: IZeroState) => {
   return (
     <ThemedView style={styles.center}>
       <TabBarIcon name="thermometer" style={styles.icon} />
-      <ThemedText type="defaultSemiBold">No Todo yet</ThemedText>
-      <ThemedText>oops! no todo list yet</ThemedText>
+      <ThemedText type="defaultSemiBold">{text}</ThemedText>
+      <ThemedText>{detail}</ThemedText>
     </ThemedView>
   );
 };
