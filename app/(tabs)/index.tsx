@@ -7,15 +7,15 @@ import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import SearchBar from '@/components/primitives/SearchInput';
 import { router } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { RootState } from '@/redux/store';
 import TodoCard from '@/components/primitives/TodoCard';
 import ZeroState from '@/components/primitives/ZeroState';
 import { setTodoCompleted } from '@/redux/slice/todo';
 import { useCallback, useMemo, useState } from 'react';
 import { debounce } from '@/utils/debounce';
+import { getMemoisedTodos } from '@/redux/selectors';
 
 export default function HomeScreen() {
-  const todoList = useAppSelector((state: RootState) => state.todoList);
+  const todoList = useAppSelector(getMemoisedTodos);
   const dispatch = useAppDispatch();
 
   const [phrase, setPhrase] = useState('');
@@ -103,11 +103,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   headerContainer: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     maxHeight: 120,
-    paddingTop: 20,
+    paddingTop: 50,
   },
 
   searchInput: {

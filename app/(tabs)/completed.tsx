@@ -4,21 +4,15 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { RootState } from '@/redux/store';
-import { useMemo } from 'react';
 import TodoCard from '@/components/primitives/TodoCard';
 import { setTodoCompleted } from '@/redux/slice/todo';
 import { router } from 'expo-router';
 import ZeroState from '@/components/primitives/ZeroState';
+import { getCompletedTodos } from '@/redux/selectors';
 
 export default function TabTwoScreen() {
-  const todoList = useAppSelector((state: RootState) => state.todoList);
+  const completedTodos = useAppSelector(getCompletedTodos);
   const dispatch = useAppDispatch();
-
-  const completedList = useMemo(
-    () => todoList.filter((todo) => !!todo.completed),
-    [todoList]
-  );
 
   return (
     <ParallaxScrollView
@@ -33,8 +27,8 @@ export default function TabTwoScreen() {
         This includes only todos' marked as completed code to help you get
         started.
       </ThemedText>
-      {completedList.length > 0 ? (
-        completedList.map((todo) => (
+      {completedTodos.length > 0 ? (
+        completedTodos.map((todo) => (
           <TodoCard
             todo={todo}
             key={todo.id}
