@@ -15,7 +15,7 @@ import { ComponentProps, useMemo, useState } from 'react';
 import { ThemedInput } from '@/components/ThemedInput';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { createTodo, editTodo } from '@/redux/slice/todo';
-import { RootState } from '@/redux/store';
+import { getMemoisedTodos } from '@/redux/selectors';
 
 type IconButtonType = TouchableOpacityProps & {
   name: ComponentProps<typeof Ionicons>['name'];
@@ -36,9 +36,8 @@ function IconButton({ name, ...props }: IconButtonType) {
 
 export default function CreateScreen() {
   const param = useLocalSearchParams();
-  const theme = useColorScheme() ?? 'light';
   const dispatch = useAppDispatch();
-  const todoList = useAppSelector((state: RootState) => state.todoList);
+  const todoList = useAppSelector(getMemoisedTodos);
 
   const todo = useMemo(
     () => todoList.find((todo) => todo.id === param.id),
@@ -57,26 +56,39 @@ export default function CreateScreen() {
   async function handleTodoCreation() {
     if (title && description) {
       if (!!todo?.id) {
-        await dispatch(
-          editTodo({
-            id: todo.id,
-            title,
-            description,
-            completed: todo.completed,
-          })
-        );
+        try {
+          await dispatch(
+            editTodo({
+              id: todo.id,
+              title,
+              description,
+              completed: todo.completed,
+            })
+          );
+        } catch (err) {
+          console.debug(err);
+        }
       } else {
-        await dispatch(createTodo({ title, description }));
+        try {
+          await dispatch(
+            createTodo({
+              title,
+              description,
+            })
+          );
+        } catch (err) {
+          console.debug(err);
+        }
       }
       handleClose();
     } else {
-      Alert.alert('Empty Field', 'must have title & description', [
+      Alert.alert('Empty Field', 'please add title & description', [
         {
-          text: 'Cancel',
+          text: 'Go home',
           onPress: handleClose,
           style: 'cancel',
         },
-        { text: 'OK', onPress: () => {} },
+        { text: 'Continue', onPress: () => {} },
       ]);
     }
   }
@@ -102,10 +114,11 @@ export default function CreateScreen() {
         <ThemedInput
           label="Description"
           placeholder="Details about something fun..."
-          style={{ flex: 1, minHeight: 180 }}
+          style={{ flex: 1, alignItems: 'flex-start' }}
           value={description}
           onChangeText={(val) => setDescription(val)}
           multiline={true}
+          numberOfLines={5}
         />
       </ThemedView>
     </ThemedView>
