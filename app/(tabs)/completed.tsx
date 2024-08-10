@@ -1,13 +1,25 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { RootState } from '@/redux/store';
+import { useMemo } from 'react';
+import TodoCard from '@/components/primitives/TodoCard';
+import { setTodoCompleted } from '@/redux/slice/todo';
+import { router } from 'expo-router';
+import ZeroState from '@/components/primitives/ZeroState';
 
 export default function TabTwoScreen() {
+  const { todoList } = useAppSelector((state: RootState) => state);
+  const dispatch = useAppDispatch();
+
+  const completedList = useMemo(
+    () => todoList.filter((todo) => !!todo.completed),
+    [todoList]
+  );
+
   return (
     <ParallaxScrollView
       headerElement={
@@ -16,74 +28,33 @@ export default function TabTwoScreen() {
         </ThemedView>
       }
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <Ionicons size={310} name="code-slash" style={styles.headerImage} />
-      }
     >
       <ThemedText>
-        This app includes example code to help you get started.
+        This includes only todos' marked as completed code to help you get
+        started.
       </ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>{' '}
-          in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the{' '}
-          <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to
-          provide files for different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ alignSelf: 'center' }}
+      {completedList.length > 0 ? (
+        completedList.map((todo) => (
+          <TodoCard
+            todo={todo}
+            key={todo.id}
+            onCheck={(value) =>
+              dispatch(setTodoCompleted({ id: todo.id, completed: value }))
+            }
+            onEdit={(id) =>
+              router.navigate({
+                pathname: '/create',
+                params: { id },
+              })
+            }
+          />
+        ))
+      ) : (
+        <ZeroState
+          text="No Completed Todo yet"
+          detail="oops! no completed todo list yet"
         />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText>{' '}
-          to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user's current color scheme is, and so you
-          can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
+      )}
     </ParallaxScrollView>
   );
 }
@@ -99,6 +70,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     paddingTop: 40,
-    paddingBottom: 20,
+    paddingLeft: 32,
   },
 });
