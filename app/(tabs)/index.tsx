@@ -9,7 +9,7 @@ import { router } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import TodoCard from '@/components/primitives/TodoCard';
 import ZeroState from '@/components/primitives/ZeroState';
-import { setTodoCompleted } from '@/redux/slice/todo';
+import { deleteTodo, setTodoCompleted } from '@/redux/slice/todo';
 import { useCallback, useMemo, useState } from 'react';
 import { debounce } from '@/utils/debounce';
 import { getMemoisedTodos } from '@/redux/selectors';
@@ -65,6 +65,7 @@ export default function HomeScreen() {
               onCheck={(value) =>
                 dispatch(setTodoCompleted({ id: todo.id, completed: value }))
               }
+              onDelete={(id) => dispatch(deleteTodo(id))}
               onEdit={(id) =>
                 router.navigate({
                   pathname: '/create',
@@ -103,11 +104,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   headerContainer: {
-    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     maxHeight: 120,
     paddingTop: 50,
+    marginBottom: 4,
   },
 
   searchInput: {

@@ -1,23 +1,24 @@
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { ThemedText } from '../ThemedText';
 import { ITodo } from '@/types/todos';
 import { ThemedView } from '../ThemedView';
 import moment from 'moment';
+import { TabBarIcon } from '../navigation/TabBarIcon';
 
 interface ITodoCardProps {
   todo: ITodo;
   onCheck?: (value: boolean) => void;
   onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
-export default function TodoCard({ todo, onCheck, onEdit }: ITodoCardProps) {
+export default function TodoCard({
+  todo,
+  onCheck,
+  onEdit,
+  onDelete,
+}: ITodoCardProps) {
   return (
     <TouchableOpacity
       onLongPress={() => {
@@ -31,8 +32,22 @@ export default function TodoCard({ todo, onCheck, onEdit }: ITodoCardProps) {
         ]}
         key={todo.id}
       >
-        <ThemedText type="subtitle">{todo.title}</ThemedText>
-        <ThemedText>{todo.description}</ThemedText>
+        <View style={styles.titleContainer}>
+          <ThemedText type="subtitle" style={{ flex: 1 }} numberOfLines={2}>
+            {todo.title}
+          </ThemedText>
+          <View>
+            <TouchableOpacity
+              style={[styles.iconButton]}
+              onPress={() => {
+                if (!!onDelete) onDelete(todo.id);
+              }}
+            >
+              <TabBarIcon size={20} name="remove" color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <ThemedText numberOfLines={2}>{todo.description}</ThemedText>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <View style={styles.checkboxContainer}>
             <Checkbox
@@ -64,5 +79,14 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     borderRadius: 6,
+  },
+  iconButton: {
+    borderRadius: 1000,
+    padding: 4,
+    backgroundColor: '#FF165D',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
