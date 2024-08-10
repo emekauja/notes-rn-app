@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { ThemedView } from '../ThemedView';
 import { ThemedText } from '../ThemedText';
@@ -12,7 +12,9 @@ interface IZeroState {
 const ZeroState = ({ text, detail }: IZeroState) => {
   return (
     <ThemedView style={styles.center}>
-      <TabBarIcon name="thermometer" style={styles.icon} />
+      <View style={styles.icon}>
+        <TabBarIcon name="thermometer" />
+      </View>
       <ThemedText type="defaultSemiBold">{text}</ThemedText>
       <ThemedText>{detail}</ThemedText>
     </ThemedView>
@@ -24,8 +26,8 @@ export default ZeroState;
 const styles = StyleSheet.create({
   icon: {
     backgroundColor: 'pink',
-    padding: 6,
-    borderRadius: 50,
+    padding: 8,
+    borderRadius: 200,
   },
   center: {
     alignItems: 'center',
