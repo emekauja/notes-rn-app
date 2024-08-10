@@ -114,7 +114,12 @@ export default function CreateScreen() {
         <ThemedInput
           label="Description"
           placeholder="Details about something fun..."
-          style={{ flex: 1, alignItems: 'flex-start' }}
+          style={{
+            flex: 1,
+            alignItems: 'flex-start',
+            minHeight: 200,
+            textAlignVertical: 'top',
+          }}
           value={description}
           onChangeText={(val) => setDescription(val)}
           multiline={true}
