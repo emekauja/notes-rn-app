@@ -54,10 +54,10 @@ export default function CreateScreen() {
     router.navigate('/');
   }
 
-  function handleTodoCreation() {
+  async function handleTodoCreation() {
     if (title && description) {
       if (!!todo?.id) {
-        return dispatch(
+        await dispatch(
           editTodo({
             id: todo.id,
             title,
@@ -66,7 +66,7 @@ export default function CreateScreen() {
           })
         );
       } else {
-        dispatch(createTodo({ title, description }));
+        await dispatch(createTodo({ title, description }));
       }
       handleClose();
     } else {

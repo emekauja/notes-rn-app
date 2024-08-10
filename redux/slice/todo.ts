@@ -33,16 +33,13 @@ const todoSlice = createSlice({
       state.splice(index, 1);
     },
     editTodo(state, action: PayloadAction<Omit<ITodo, 'date'>>) {
-      state.map((todo) =>
-        todo.id === action.payload.id
-          ? {
-              ...todo,
-              title: action.payload.title,
-              description: action.payload.description,
-              date: new Date(),
-            }
-          : todo
-      );
+      const index = state.findIndex((todo) => todo.id === action.payload.id);
+      state[index] = {
+        ...state[index],
+        title: action.payload.title,
+        description: action.payload.description,
+        date: new Date(),
+      };
     },
     setTodoCompleted(
       state,
