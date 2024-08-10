@@ -1,6 +1,6 @@
-# Welcome to your Expo app 👋
+# Todoist 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A small task management react native app.
 
 ## Get started
 
