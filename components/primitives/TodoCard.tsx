@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import { ThemedText } from '../ThemedText';
@@ -15,7 +15,7 @@ export default function TodoCard({ todo, onCheck }: ITodoCardProps) {
   const [isChecked, setChecked] = useState(() => todo.completed ?? false);
 
   const onChange = (value: boolean) => {
-    if (!!onCheck) onCheck;
+    if (!!onCheck) onCheck(value);
     setChecked(value);
   };
 
@@ -30,11 +30,11 @@ export default function TodoCard({ todo, onCheck }: ITodoCardProps) {
       <ThemedText type="subtitle">{todo.title}</ThemedText>
       <ThemedText>{todo.description}</ThemedText>
       <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.checkboxContainer}>
           <Checkbox
             style={styles.checkbox}
             value={isChecked}
-            onValueChange={setChecked}
+            onValueChange={onChange}
             color={isChecked ? '#4630EB' : undefined}
           />
           <ThemedText>{isChecked ? 'Completed' : 'Not completed'}</ThemedText>
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
   },
+  checkboxContainer: { flexDirection: 'row', gap: 4 },
   checkbox: {
     height: 24,
     width: 24,
