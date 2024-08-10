@@ -5,11 +5,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import SearchBar from '@/components/primitives/SearchInput';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { RootState } from '@/redux/store';
 import TodoCard from '@/components/primitives/TodoCard';
 import ZeroState from '@/components/primitives/ZeroState';
+import { editTodo, setTodoCompleted } from '@/redux/slice/todo';
 
 export default function HomeScreen() {
   const { todoList } = useAppSelector((state: RootState) => state);
@@ -33,7 +34,21 @@ export default function HomeScreen() {
         headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       >
         {todoList.length > 1 ? (
-          todoList.map((todo) => <TodoCard todo={todo} key={todo.id} />)
+          todoList.map((todo) => (
+            <TodoCard
+              todo={todo}
+              key={todo.id}
+              onCheck={(value) =>
+                dispatch(setTodoCompleted({ id: todo.id, completed: value }))
+              }
+              onEdit={(id) =>
+                router.navigate({
+                  pathname: '/create',
+                  params: { id },
+                })
+              }
+            />
+          ))
         ) : (
           <ZeroState text="No Todo yet" detail="oops! no todo list yet" />
         )}

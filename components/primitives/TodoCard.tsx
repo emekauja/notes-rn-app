@@ -1,4 +1,10 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import { ThemedText } from '../ThemedText';
@@ -9,9 +15,10 @@ import moment from 'moment';
 interface ITodoCardProps {
   todo: ITodo;
   onCheck?: (value: boolean) => void;
+  onEdit?: (id: string) => void;
 }
 
-export default function TodoCard({ todo, onCheck }: ITodoCardProps) {
+export default function TodoCard({ todo, onCheck, onEdit }: ITodoCardProps) {
   const [isChecked, setChecked] = useState(() => todo.completed ?? false);
 
   const onChange = (value: boolean) => {
@@ -20,28 +27,34 @@ export default function TodoCard({ todo, onCheck }: ITodoCardProps) {
   };
 
   return (
-    <ThemedView
-      style={[
-        styles.container,
-        { backgroundColor: todo.completed ? '#C8C8FF' : '#FDDC6D' },
-      ]}
-      key={todo.id}
+    <TouchableOpacity
+      onLongPress={() => {
+        if (!!onEdit) onEdit(todo.id);
+      }}
     >
-      <ThemedText type="subtitle">{todo.title}</ThemedText>
-      <ThemedText>{todo.description}</ThemedText>
-      <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            style={styles.checkbox}
-            value={isChecked}
-            onValueChange={onChange}
-            color={isChecked ? '#4630EB' : undefined}
-          />
-          <ThemedText>{isChecked ? 'Completed' : 'Not completed'}</ThemedText>
+      <ThemedView
+        style={[
+          styles.container,
+          { backgroundColor: todo.completed ? '#C8C8FF' : '#FDDC6D' },
+        ]}
+        key={todo.id}
+      >
+        <ThemedText type="subtitle">{todo.title}</ThemedText>
+        <ThemedText>{todo.description}</ThemedText>
+        <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              style={styles.checkbox}
+              value={isChecked}
+              onValueChange={onChange}
+              color={isChecked ? '#4630EB' : undefined}
+            />
+            <ThemedText>{isChecked ? 'Completed' : 'Not completed'}</ThemedText>
+          </View>
+          <ThemedText type="small">{moment(todo.date).fromNow()}</ThemedText>
         </View>
-        <ThemedText type="small">{moment(todo.date).fromNow()}</ThemedText>
-      </View>
-    </ThemedView>
+      </ThemedView>
+    </TouchableOpacity>
   );
 }
 

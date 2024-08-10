@@ -32,7 +32,7 @@ const todoSlice = createSlice({
       const index = state.findIndex((todo) => todo.id === action.payload);
       state.splice(index, 1);
     },
-    editTodo(state, action: PayloadAction<ITodo>) {
+    editTodo(state, action: PayloadAction<Omit<ITodo, 'date'>>) {
       state.map((todo) =>
         todo.id === action.payload.id
           ? {
@@ -44,7 +44,7 @@ const todoSlice = createSlice({
           : todo
       );
     },
-    setTodoStatus(
+    setTodoCompleted(
       state,
       action: PayloadAction<{ completed: boolean; id: string }>
     ) {
@@ -54,5 +54,6 @@ const todoSlice = createSlice({
   },
 });
 
-export const { createTodo, deleteTodo, setTodoStatus } = todoSlice.actions;
+export const { createTodo, deleteTodo, editTodo, setTodoCompleted } =
+  todoSlice.actions;
 export default todoSlice.reducer;
