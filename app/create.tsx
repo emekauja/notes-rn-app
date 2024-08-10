@@ -38,7 +38,7 @@ export default function CreateScreen() {
   const param = useLocalSearchParams();
   const theme = useColorScheme() ?? 'light';
   const dispatch = useAppDispatch();
-  const { todoList } = useAppSelector((state: RootState) => state);
+  const todoList = useAppSelector((state: RootState) => state.todoList);
 
   const todo = useMemo(
     () => todoList.find((todo) => todo.id === param.id),

@@ -12,7 +12,7 @@ import { router } from 'expo-router';
 import ZeroState from '@/components/primitives/ZeroState';
 
 export default function TabTwoScreen() {
-  const { todoList } = useAppSelector((state: RootState) => state);
+  const todoList = useAppSelector((state: RootState) => state.todoList);
   const dispatch = useAppDispatch();
 
   const completedList = useMemo(

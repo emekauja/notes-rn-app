@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { debounce } from '@/utils/debounce';
 
 export default function HomeScreen() {
-  const { todoList } = useAppSelector((state: RootState) => state);
+  const todoList = useAppSelector((state: RootState) => state.todoList);
   const dispatch = useAppDispatch();
 
   const [phrase, setPhrase] = useState('');
