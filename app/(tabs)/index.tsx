@@ -10,31 +10,55 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { RootState } from '@/redux/store';
 import TodoCard from '@/components/primitives/TodoCard';
 import ZeroState from '@/components/primitives/ZeroState';
-import { editTodo, setTodoCompleted } from '@/redux/slice/todo';
+import { setTodoCompleted } from '@/redux/slice/todo';
+import { useCallback, useMemo, useState } from 'react';
+import { debounce } from '@/utils/debounce';
 
 export default function HomeScreen() {
   const { todoList } = useAppSelector((state: RootState) => state);
   const dispatch = useAppDispatch();
+
+  const [phrase, setPhrase] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const memoisedTodoList = useMemo(
+    () =>
+      todoList.filter(
+        (todo) =>
+          !!todo.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+      ),
+    [searchTerm, todoList]
+  );
+
+  const debounceFn = useCallback(
+    debounce((value) => {
+      setSearchTerm(value);
+    }, 800),
+    []
+  );
 
   return (
     <>
       <ParallaxScrollView
         headerElement={
           <ThemedView style={styles.headerContainer}>
-            <ThemedText type="title">Todoist</ThemedText>
+            <ThemedText type="title">Todóist</ThemedText>
             <SearchBar
-              searchPhrase=""
-              updateClicked={(click) => {
-                console.log(click);
+              searchPhrase={phrase}
+              updateClicked={() => {
+                //do nothing
               }}
-              updateSearchPhrase={(phrase) => {}}
+              updateSearchPhrase={(phrase) => {
+                setPhrase(phrase ?? '');
+                debounceFn(phrase);
+              }}
             />
           </ThemedView>
         }
         headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       >
-        {todoList.length > 1 ? (
-          todoList.map((todo) => (
+        {memoisedTodoList.length > 0 ? (
+          memoisedTodoList.map((todo) => (
             <TodoCard
               todo={todo}
               key={todo.id}
