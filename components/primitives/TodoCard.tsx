@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import { ThemedText } from '../ThemedText';
 import { ITodo } from '@/types/todos';
@@ -19,13 +18,6 @@ interface ITodoCardProps {
 }
 
 export default function TodoCard({ todo, onCheck, onEdit }: ITodoCardProps) {
-  const [isChecked, setChecked] = useState(() => todo.completed ?? false);
-
-  const onChange = (value: boolean) => {
-    if (!!onCheck) onCheck(value);
-    setChecked(value);
-  };
-
   return (
     <TouchableOpacity
       onLongPress={() => {
@@ -45,11 +37,13 @@ export default function TodoCard({ todo, onCheck, onEdit }: ITodoCardProps) {
           <View style={styles.checkboxContainer}>
             <Checkbox
               style={styles.checkbox}
-              value={isChecked}
-              onValueChange={onChange}
-              color={isChecked ? '#4630EB' : undefined}
+              value={todo.completed}
+              onValueChange={onCheck}
+              color={todo.completed ? '#4630EB' : undefined}
             />
-            <ThemedText>{isChecked ? 'Completed' : 'Not completed'}</ThemedText>
+            <ThemedText>
+              {todo.completed ? 'Completed' : 'Not completed'}
+            </ThemedText>
           </View>
           <ThemedText type="small">{moment(todo.date).fromNow()}</ThemedText>
         </View>
