@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import TodoCard from '@/components/primitives/TodoCard';
-import { setTodoCompleted } from '@/redux/slice/todo';
+import { deleteTodo, setTodoCompleted } from '@/redux/slice/todo';
 import { router } from 'expo-router';
 import ZeroState from '@/components/primitives/ZeroState';
 import { getCompletedTodos } from '@/redux/selectors';
@@ -35,6 +35,7 @@ export default function TabTwoScreen() {
             onCheck={(value) =>
               dispatch(setTodoCompleted({ id: todo.id, completed: value }))
             }
+            onDelete={(id) => dispatch(deleteTodo(id))}
             onEdit={(id) =>
               router.navigate({
                 pathname: '/create',
